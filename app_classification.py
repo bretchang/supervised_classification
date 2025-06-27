@@ -246,10 +246,20 @@ def get_current_data():
 if page == "🏠 監督式學習概述":
     st.markdown('<h1 class="main-header">監督式學習(Supervised Learning)-分類 互動教學平台</h1>', unsafe_allow_html=True)
     
+    st.markdown("## 🏅 什麼是監督式學習？")
+    
+    st.markdown("""
+    **監督式學習**是機器學習的一個重要分支，其特點是：
+    
+    1. **有標籤的訓練數據**：每個樣本都有對應的正確答案
+    2. **學習映射關係**：從輸入特徵到輸出標籤的函數關係
+    3. **預測新數據**：用學到的模型對未見過的數據進行預測
+    """)
+
     st.markdown("## 🎯 什麼是分類？")
     
     st.markdown("""
-    **分類(Classification)**是監督式學習的重要分支，目標是將數據點分配到預定義的類別中：
+    分類(Classification)是監督式學習的重要分支，目標是將數據點分配到預定義的類別中：
     
     1. **離散輸出**：預測結果是有限的類別標籤
     2. **決策邊界**：學習區分不同類別的邊界
@@ -594,6 +604,51 @@ elif page == "📈 邏輯回歸":
     J(\beta) = -\frac{1}{m} \sum_{i=1}^{m} [y_i \log(h_\beta(x_i)) + (1-y_i) \log(1-h_\beta(x_i))]
     ''')
     
+    st.markdown("### 🔧 求解器的作用")
+    st.markdown("求解器的任務是找到使損失函數最小的參數 β：")
+    st.latex(r'''
+    \beta^* = \arg\min_\beta J(\beta)
+    ''')
+    
+    st.markdown("**不同求解器的特點：**")
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown("""
+        **🔹 liblinear**
+        - 座標下降法
+        - 適合：< 10,000 樣本
+        - 支持：L1, L2 正則化
+        - 速度：中等
+        """)
+        
+        st.markdown("""
+        **🔹 lbfgs** 
+        - 有限記憶 BFGS
+        - 適合：< 100,000 樣本
+        - 支持：L2 正則化
+        - 速度：快速收斂
+        """)
+    
+    with col2:
+        st.markdown("""
+        **🔹 newton-cg**
+        - 牛頓共軛梯度法
+        - 適合：大數據集
+        - 支持：L2 正則化  
+        - 速度：穩定
+        """)
+        
+        st.markdown("""
+        **🔹 sag**
+        - 隨機平均梯度
+        - 適合：> 100,000 樣本
+        - 支持：L2 正則化
+        - 速度：大數據集快
+        """)
+    
+    st.warning("💡 **選擇建議**：數據量小選liblinear，中等選lbfgs，大數據選sag或newton-cg")
+    
     # 優缺點
     col1, col2 = st.columns(2)
     
@@ -621,6 +676,17 @@ elif page == "📈 邏輯回歸":
     X, y, target_names = get_current_data()
     
     if len(X) > 0:
+        # 求解器說明
+        st.markdown("### 🔧 求解器說明")
+        st.info("""
+        **求解器 (Solver)** 是用來尋找邏輯回歸最佳參數的優化算法：
+        
+        - **liblinear**: 適合小數據集，支持L1和L2正則化
+        - **lbfgs**: 適合小到中等數據集，收斂快，只支持L2正則化  
+        - **newton-cg**: 適合大數據集，只支持L2正則化
+        - **sag**: 適合大數據集，隨機平均梯度下降
+        """)
+        
         # 參數設置
         col1, col2 = st.columns(2)
         
@@ -1530,29 +1596,25 @@ elif page == "📏 評價指標詳解":
         st.markdown("#### 📈 ROC曲線 (Receiver Operating Characteristic)")
         st.markdown("ROC曲線展示不同閾值下TPR與FPR的關係：")
         
-        col1, col2 = st.columns(2)
+        st.latex(r'''
+        \begin{align}
+        TPR &= \frac{TP}{TP + FN} = Recall \\
+        FPR &= \frac{FP}{FP + TN}
+        \end{align}
+        ''')
         
-        with col1:
-            st.latex(r'''
-            \begin{align}
-            TPR &= \frac{TP}{TP + FN} = Recall \\
-            FPR &= \frac{FP}{FP + TN}
-            \end{align}
-            ''')
-            
-            st.markdown("**TPR (真陽性率)**: 召回率")
-            st.markdown("**FPR (假陽性率)**: 假陽性佔所有陰性的比例")
+        st.markdown("**TPR (真陽性率)**: 召回率")
+        st.markdown("**FPR (假陽性率)**: 假陽性佔所有陰性的比例")
         
-        with col2:
-            st.markdown("#### 📊 AUC (Area Under Curve)")
-            st.latex(r'''
-            AUC = \int_0^1 TPR(FPR^{-1}(x)) dx
-            ''')
-            
-            st.markdown("**AUC範圍**:")
-            st.markdown("- **AUC = 1**: 完美分類器")
-            st.markdown("- **AUC = 0.5**: 隨機分類器")
-            st.markdown("- **AUC < 0.5**: 比隨機還差")
+        st.markdown("#### 📊 AUC (Area Under Curve)")
+        st.latex(r'''
+        AUC = \int_0^1 TPR(FPR^{-1}(x)) dx
+        ''')
+        
+        st.markdown("**AUC範圍**:")
+        st.markdown("- **AUC = 1**: 完美分類器")
+        st.markdown("- **AUC = 0.5**: 隨機分類器")
+        st.markdown("- **AUC < 0.5**: 比隨機還差")
         
         # 創建示例ROC曲線
         fpr_sim = np.linspace(0, 1, 100)
@@ -2531,6 +2593,8 @@ elif page == "⚖️ 資料不平衡處理":
         # 處理方法選擇
         st.markdown("### 🔧 不平衡處理方法比較")
         
+        st.info("💡 **模型說明**：本頁面使用 **邏輯回歸** 作為基礎模型來比較不同不平衡處理方法的效果")
+        
         processing_method = st.selectbox("選擇處理方法：", [
             "無處理", "SMOTE過採樣", "類別權重平衡"
         ])
@@ -2568,10 +2632,13 @@ elif page == "⚖️ 資料不平衡處理":
                 X_train_processed, y_train_processed = X_train_scaled, y_train
             
             # 建立模型
+            st.markdown("#### 🤖 模型配置")
             if processing_method == "類別權重平衡":
                 model = LogisticRegression(class_weight='balanced', random_state=42, max_iter=1000)
+                st.code("LogisticRegression(class_weight='balanced', random_state=42, max_iter=1000)", language='python')
             else:
                 model = LogisticRegression(random_state=42, max_iter=1000)
+                st.code("LogisticRegression(random_state=42, max_iter=1000)", language='python')
             
             # 訓練和預測
             model.fit(X_train_processed, y_train_processed)
@@ -2754,6 +2821,33 @@ elif page == "🔍 模型可解釋性":
             # 預測示例解釋
             st.markdown("### 🎯 單個預測示例解釋")
             
+            # 添加功能說明
+            with st.expander("💡 功能說明 - 點擊展開", expanded=False):
+                st.markdown("""
+                這個功能讓您深入理解模型是如何對具體一個樣本做出預測決策的：
+                
+                #### 📊 左側 - 樣本特徵值
+                - **顯示內容**：這個樣本的所有特徵數值
+                - **意義**：這些是模型的「輸入」，就像給醫生看的檢查報告數據
+                
+                #### 🎯 右側 - 預測結果  
+                - **預測類別**：模型最終判斷這個樣本屬於哪一類
+                - **預測概率**：模型對這個判斷的信心程度（0-1之間）
+                - **概率分布圖**：顯示模型對每個類別的預測概率
+                
+                #### 🔍 這告訴您什麼
+                - **模型邏輯**：通過這些特徵值，模型如何做出判斷
+                - **信心程度**：95%的概率表示模型很有信心，50%表示不確定
+                - **決策過程**：您可以看出哪些特徵值可能影響了這個決策
+                - **模型穩定性**：如果概率分布很平均（如0.4, 0.3, 0.3），說明模型不太確定
+                
+                #### 🎯 實用價值
+                - **驗證合理性**：檢查模型預測是否符合常理
+                - **發現問題**：如果明顯應該是A類但預測成B類，可能模型有問題
+                - **理解邏輯**：幫助您理解「什麼樣的輸入會導致什麼樣的輸出」
+                - **建立信任**：透明的預測過程增加對模型的信任
+                """)
+            
             sample_idx = st.slider("選擇測試樣本：", 0, len(X_test)-1, 0)
             
             if interpretable_model == "邏輯回歸":
@@ -2769,8 +2863,68 @@ elif page == "🔍 模型可解釋性":
             
             with col1:
                 st.markdown("#### 📊 樣本特徵值")
-                for i, feature in enumerate(selected_features):
-                    st.metric(feature, f"{X_test.iloc[sample_idx][feature]:.3f}")
+                
+                # 獲取樣本特徵值
+                sample_feature_values = [X_test.iloc[sample_idx][feature] for feature in selected_features]
+                
+                # 創建雷達圖來顯示特徵值（如果特徵數量適中）
+                if len(selected_features) <= 8:
+                    # 標準化特徵值用於雷達圖顯示（0-1範圍）
+                    feature_min = X_test[selected_features].min()
+                    feature_max = X_test[selected_features].max()
+                    normalized_values = []
+                    for i, feature in enumerate(selected_features):
+                        if feature_max[feature] != feature_min[feature]:
+                            norm_val = (sample_feature_values[i] - feature_min[feature]) / (feature_max[feature] - feature_min[feature])
+                        else:
+                            norm_val = 0.5
+                        normalized_values.append(norm_val)
+                    
+                    # 雷達圖
+                    fig = go.Figure()
+                    fig.add_trace(go.Scatterpolar(
+                        r=normalized_values + [normalized_values[0]],  # 閉合圖形
+                        theta=selected_features + [selected_features[0]],
+                        fill='toself',
+                        name='特徵值',
+                        line_color='blue',
+                        fillcolor='rgba(0,100,255,0.2)'
+                    ))
+                    fig.update_layout(
+                        polar=dict(
+                            radialaxis=dict(
+                                visible=True,
+                                range=[0, 1]
+                            )),
+                        title="特徵值雷達圖 (標準化後)",
+                        height=400
+                    )
+                    st.plotly_chart(fig, use_container_width=True)
+                    
+                    # 顯示實際數值
+                    st.markdown("**實際特徵值：**")
+                    for i, feature in enumerate(selected_features):
+                        st.text(f"{feature}: {sample_feature_values[i]:.3f}")
+                
+                else:
+                    # 特徵太多時使用條形圖
+                    fig = go.Figure(data=[
+                        go.Bar(
+                            x=selected_features,
+                            y=sample_feature_values,
+                            marker_color='lightblue',
+                            text=[f"{val:.3f}" for val in sample_feature_values],
+                            textposition='auto'
+                        )
+                    ])
+                    fig.update_layout(
+                        title="樣本特徵值",
+                        xaxis_title="特徵",
+                        yaxis_title="數值",
+                        xaxis_tickangle=45,
+                        height=400
+                    )
+                    st.plotly_chart(fig, use_container_width=True)
             
             with col2:
                 st.markdown("#### 🎯 預測結果")
@@ -2779,13 +2933,31 @@ elif page == "🔍 模型可解釋性":
                 
                 # 概率分布
                 fig = go.Figure(data=[
-                    go.Bar(x=target_names, y=sample_pred_proba)
+                    go.Bar(
+                        x=target_names, 
+                        y=sample_pred_proba,
+                        marker_color=['red' if i == sample_pred else 'lightgray' for i in range(len(target_names))],
+                        text=[f"{prob:.3f}" for prob in sample_pred_proba],
+                        textposition='auto'
+                    )
                 ])
                 fig.update_layout(
                     title="各類別預測概率",
+                    xaxis_title="類別",
+                    yaxis_title="預測概率",
                     height=300
                 )
                 st.plotly_chart(fig, use_container_width=True)
+                
+                # 添加預測信心度說明
+                confidence = sample_pred_proba[sample_pred]
+                if confidence > 0.9:
+                    st.success(f"🎯 **高信心度預測** ({confidence:.1%})")
+                elif confidence > 0.7:
+                    st.info(f"✅ **中等信心度預測** ({confidence:.1%})")
+                else:
+                    st.warning(f"⚠️ **低信心度預測** ({confidence:.1%})")
+                    st.caption("模型對此預測不太確定，建議謹慎使用")
 
 elif page == "🏆 模型綜合比較":
     st.markdown('<h1 class="main-header">🏆 模型綜合比較</h1>', unsafe_allow_html=True)
